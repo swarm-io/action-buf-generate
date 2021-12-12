@@ -1,6 +1,10 @@
 name: 'Buf generate'
 description: 'Installs buf, and dependencies, runs generate, and optionally pushes changes'
 inputs:
+  github-token:
+    description: Github token to use
+    required: false
+    default: ${{ github.token }}
   push:
     description: Should changes be pushed
     required: false
