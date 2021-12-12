@@ -49,14 +49,16 @@ runs:
       shell: bash
       run: |
         buf generate
-    - name: Commit changes
-      if: ${{ inputs.push  == 'true' }}
-      shell: bash
-      run: |
-        git diff-index --quiet HEAD || git commit -am "CI ran buf generate"
-    - name: Push changes
-      if: ${{ inputs.push  == 'true' }}
-      uses: ad-m/github-push-action@master
-      with:
-        github_token: ${{ inputs.github-token }}
-        branch: ${{ inputs.branch }}
+    - name: Push
+      uses: stefanzweifel/git-auto-commit-action@v4
+#    - name: Commit changes
+#      if: ${{ inputs.push  == 'true' }}
+#      shell: bash
+#      run: |
+#        git diff-index --quiet HEAD || git commit -am "CI ran buf generate"
+#    - name: Push changes
+#      if: ${{ inputs.push  == 'true' }}
+#      uses: ad-m/github-push-action@master
+#      with:
+#        github_token: ${{ inputs.github-token }}
+#        branch: ${{ inputs.branch }}
