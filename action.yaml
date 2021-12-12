@@ -1,10 +1,6 @@
 name: 'Buf generate'
-description: 'Installs buf, and dependencies, runs generate, and optionally pushes changes'
+description: 'Installs buf, and dependencies, runs generate, and optionally pushes changes back to the branch its run on'
 inputs:
-  github-token:
-    description: Github token to use
-    required: false
-    default: ${{ github.token }}
   push:
     description: Should changes be pushed
     required: false
@@ -52,14 +48,3 @@ runs:
     - name: Push
       if: ${{ inputs.push  == 'true' }}
       uses: stefanzweifel/git-auto-commit-action@v4
-#    - name: Commit changes
-#      if: ${{ inputs.push  == 'true' }}
-#      shell: bash
-#      run: |
-#        git diff-index --quiet HEAD || git commit -am "CI ran buf generate"
-#    - name: Push changes
-#      if: ${{ inputs.push  == 'true' }}
-#      uses: ad-m/github-push-action@master
-#      with:
-#        github_token: ${{ inputs.github-token }}
-#        branch: ${{ inputs.branch }}
