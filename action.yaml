@@ -1,0 +1,46 @@
+name: 'Buf generate'
+description: 'Installs buf, and dependencies, runs generate, and optionally pushes changes'
+inputs:
+  push:
+    description: Should changes be pushed
+    required: false
+    default: true
+  branch:
+    description: :Branch to push to
+    required: false
+    default: ${{ github.ref }}
+runs:
+  using: composite
+  steps:
+    - name: Setup buf
+      uses: bufbuild/buf-setup-action@v0.6.0
+      with:
+        github_token: ${{ github.token }}
+    - name: Install Protoc
+      uses: arduino/setup-protoc@v1
+      with:
+        repo-token: ${{ github.token }}
+    - name: Install Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.17.x
+    - name: Install Go dependencies
+      shell: bash
+      run: |
+        go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+        go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+    - name: Run generate
+      shell: bash
+      run: |
+        buf generate
+    - name: Commit changes
+      if: ${{ inputs.push  == 'true' }}
+      shell: bash
+      run: |
+        git commit -am "CI ran buf generate"
+    - name: Push changes
+      if: ${{ inputs.push  == 'true' }}
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ inputs.github-token }}
+        branch: ${{ inputs.branch }}

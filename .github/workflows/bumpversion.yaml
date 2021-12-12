@@ -1,0 +1,29 @@
+name: Bump version
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - action.yaml
+jobs:
+  bump-version:
+    name: Bump version
+    runs-on: ubuntu-latest
+    if: "!startsWith(github.event.head_commit.message, 'Bump version:') && (startsWith(github.event.head_commit.message, 'fix:') || startsWith(github.event.head_commit.message, 'feat:') || startsWith(github.event.head_commit.message, 'breaking:'))"
+    outputs:
+      bumpType: ${{ steps.get-bump-type.outputs.bumpType }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Configure git
+        uses: dawidd6/action-git-user-config@v1
+      - id: get-bump-type
+        name: Get bump type
+        uses: swarm-io/action-get-bump-type@main
+      - name: Bump version
+        uses: swarm-io/action-bump2version@v1
+        with:
+          part: ${{ steps.get-bump-type.outputs.bumpType }}
+          verbose: true
+          push: true
+          force: true
