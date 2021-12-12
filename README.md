@@ -8,7 +8,7 @@ This action's defaults are set up to be run on the `pull_request` event, and pus
 | Name | Description | Required | Default |  
 | - | - | - | - |
 | push | Should changes be pushed | False | True |
-| branch | Branch to push to | False | ${{ github.ref }} |
+| branch | Git branch name where changes should be pushed to | False | ${{ github.head_ref }} |
 
 
 ## Example usage
