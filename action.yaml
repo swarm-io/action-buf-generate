@@ -53,7 +53,7 @@ runs:
       if: ${{ inputs.push  == 'true' }}
       shell: bash
       run: |
-        git diff-index --quite HEAD || git commit -am "CI ran buf generate"
+        git diff-index --quiet HEAD || git commit -am "CI ran buf generate"
     - name: Push changes
       if: ${{ inputs.push  == 'true' }}
       uses: ad-m/github-push-action@master
