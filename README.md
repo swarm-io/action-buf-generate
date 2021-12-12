@@ -1,6 +1,8 @@
 # Buf generate action
 This action installs buf, some protoc and grpc dependencies, runs `buf generate`, and pushes changes if `push` is true. This is a public action but is set up for our use case specifically so may not work for everyone.
 
+This action's defaults are set up to be run on the `pull_request` event, and push back to the source branch, so that new pbs are generated
+
 ## Inputs
 
 | Name | Description | Required | Default |  
