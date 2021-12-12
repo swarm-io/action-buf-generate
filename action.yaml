@@ -1,0 +1,52 @@
+name: 'Buf generate'
+description: 'Installs buf, and dependencies, runs generate, and optionally pushes changes back to the branch its run on'
+inputs:
+  push:
+    description: Should changes be pushed
+    required: false
+    default: true
+  branch:
+    description: Git branch name where changes should be pushed to
+    required: false
+    default: ${{ github.head_ref }}
+runs:
+  using: composite
+  steps:
+    - name: Setup Cache
+      uses: actions/cache@v2
+      with:
+        # In order:
+        # * Module download cache
+        # * Build cache (Linux)
+        path: |
+          ~/go/pkg/mod
+          ~/.cache/go-build
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
+    - name: Setup buf
+      uses: bufbuild/buf-setup-action@v0.6.0
+      with:
+        github_token: ${{ github.token }}
+    - name: Install Protoc
+      uses: arduino/setup-protoc@v1
+      with:
+        repo-token: ${{ github.token }}
+    - name: Install Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.17.x
+    - name: Install Go dependencies
+      shell: bash
+      run: |
+        go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+        go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+    - name: Run generate
+      shell: bash
+      run: |
+        buf generate
+    - name: Push
+      if: ${{ inputs.push  == 'true' }}
+      uses: stefanzweifel/git-auto-commit-action@v4
+      with:
+        branch: ${{ inputs.branch }}
